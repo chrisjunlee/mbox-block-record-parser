@@ -1,6 +1,8 @@
 # FS = field separator
 # RS = record separator
-BEGIN {FS = "(:  )|(\r\n)"; RS = "--\n"; ORS="\n"; }
+BEGIN {
+  FS = "(:  )|(\r\n)"; RS = "--\n"; ORS="\n"; OFS=", ";
+    print "Item name", "End time", "Sale price", "Quantity"}
 
 NR > 1 {
   for(i=1; i < NF-2; i = i + 2) {
