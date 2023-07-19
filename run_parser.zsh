@@ -4,6 +4,10 @@ if [[ -z $1 ]]; then
   exit
 fi
 
+DST=""
+RECORDFILE="block_records_result.rec"
+CSVFILE="results.csv"
+
 if [[ -z $2 ]]; then
   echo "destination not specified, defaulting to ./private"
   mkdir -p private
@@ -13,10 +17,12 @@ else
   echo "found"
 fi
 
+rg $1 --no-filename -N -e "Item name:" -A9 \
+  | rg -N -v "http:.*\n.*\n.*" --multiline --no-filename | rg -e ":|(--)" --no-filename \
+  | tr -d ',' > $DST/$RECORDFILE
 
-rg $1 --no-filename -N -e "Item name:" -A9 | rg -N -v "http:.*\n.*\n.*" --multiline --no-filename | rg -e ":|(--)" --no-filename > $DST/block_records_result.rec
-
-if [ -f result_block_records.rec ]; then
-  awk -f ./record_to_csv.awk result_block_records.rec > $DST/result.csv
+if [ -f $DST/$RECORDFILE ]; then
+  awk -f ./record_to_csv.awk $DST/$RECORDFILE > $DST/$CSVFILE
+  cat $DST/$CSVFILE
   exit
 fi
